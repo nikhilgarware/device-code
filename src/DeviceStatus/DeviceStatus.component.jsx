@@ -1,17 +1,21 @@
-import React from "react";
-import {
-  activeDevices,
-  inActiveDevices,
-  blankDevice,
-} from "./DeviceStatus.utilities";
-import { Table, Input, Button, Form } from "antd";
-import { myFunc } from "./DeviceStatus.utilities";
+import React, { useState } from "react";
+import { Table, Input, Button, Form, Row, Col } from "antd";
+import { modifiedJson } from "./DeviceStatus.utilities";
+import { StatusCircle } from "./DeviceStatus.styled";
 
 const { TextArea } = Input;
+
 function DeviceStatus() {
+  const [form] = Form.useForm();
+  const [deviceStatus, setDeviceStatus] = useState(null);
   const onFinish = (data) => {
-    myFunc(data.json);
+    let tempDeviceStatus = modifiedJson(data.json);
+    setDeviceStatus(tempDeviceStatus);
   };
+  function onReset() {
+    form.resetFields();
+    setDeviceStatus(null);
+  }
   const columns = [
     {
       title: "Name",
@@ -19,37 +23,50 @@ function DeviceStatus() {
       key: "name",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
       title: "Auth User",
-      dataIndex: "authUser",
-      key: "authUser",
+      dataIndex: "deviceAuthUser",
+      key: "deviceAuthUser",
+      align: "center",
     },
     {
       title: "Latest Timestamp",
-      dataIndex: "latestTimeStamp",
-      key: "latestTimeStamp",
+      dataIndex: "timStamp",
+      key: "timStamp",
+      align: "center",
+    },
+    {
+      title: "Device Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        return <StatusCircle color={status === "true" ? "green" : "red"} />;
+      },
+      align: "center",
     },
   ];
   return (
     <div>
-      <Form name="Form" onFinish={onFinish}>
-        <Form.Item name="json">
-          <TextArea rows={4} />
+      <Form name="Form" form={form} onFinish={onFinish}>
+        <Form.Item name="json" style={{ margin: "20px" }}>
+          <TextArea rows={5} />
         </Form.Item>
-        <Form.Item name="button">
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
+        <Row align="center">
+          <Form.Item name="button" style={{ margin: "20px" }}>
+            <Button type="primary" htmlType="submit">
+              View Devices
+            </Button>
+          </Form.Item>
+          <Form.Item name="reset-button" style={{ margin: "20px" }}>
+            <Button htmlType="button" onClick={onReset}>
+              Reset
+            </Button>
+          </Form.Item>
+        </Row>
       </Form>
       <Table
         style={{ margin: "50px" }}
         columns={columns}
-        dataSource={activeDevices}
+        dataSource={deviceStatus}
       />
     </div>
   );
