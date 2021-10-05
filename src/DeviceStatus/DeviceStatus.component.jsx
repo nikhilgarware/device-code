@@ -8,8 +8,9 @@ const { TextArea } = Input;
 function DeviceStatus() {
   const [form] = Form.useForm();
   const [deviceStatus, setDeviceStatus] = useState(null);
+  const [filter, setFilter] = useState("final");
   const onFinish = (data) => {
-    let tempDeviceStatus = modifiedJson(data.json);
+    let tempDeviceStatus = modifiedJson(data.json)[filter];
     setDeviceStatus(tempDeviceStatus);
   };
   function onReset() {
@@ -48,16 +49,39 @@ function DeviceStatus() {
     <div>
       <Form name="Form" form={form} onFinish={onFinish}>
         <Form.Item name="json" style={{ margin: "20px" }}>
-          <TextArea rows={5} />
+          <TextArea rows={10} />
         </Form.Item>
         <Row align="center">
           <Form.Item name="button" style={{ margin: "20px" }}>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => setFilter("final")}
+            >
               View Devices
             </Button>
           </Form.Item>
+
+          <Form.Item name="active-button" style={{ margin: "20px" }}>
+            <Button
+              htmlType="button"
+              htmlType="submit"
+              onClick={() => setFilter("activeDevice")}
+            >
+              Active Device
+            </Button>
+          </Form.Item>
+          <Form.Item name="inactive-button" style={{ margin: "20px" }}>
+            <Button
+              htmlType="button"
+              onClick={() => setFilter("inActiveDevice")}
+              htmlType="submit"
+            >
+              Inactive Device
+            </Button>
+          </Form.Item>
           <Form.Item name="reset-button" style={{ margin: "20px" }}>
-            <Button htmlType="button" onClick={onReset}>
+            <Button type="danger" htmlType="button" onClick={onReset}>
               Reset
             </Button>
           </Form.Item>
